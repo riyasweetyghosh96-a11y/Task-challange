@@ -39,3 +39,4 @@ A RESTful web service built with **Spring Boot** to manage daily tasks and produ
 7. Flyway will create the table **Tasks** in application startup
 8. Table schema can be found in **resource/db.migration**
 9. Try all the endpoint from postman with the help of api-docs in port: 8090
+10. It has a cross-origin bypass for http://localhost:3100
