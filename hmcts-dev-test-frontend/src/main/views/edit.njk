@@ -1,0 +1,80 @@
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+{% from "govuk/components/select/macro.njk" import govukSelect %}
+
+{% extends "template.njk" %}
+
+{% block content %}
+
+<h1 class="govuk-heading-l">Edit Task</h1>
+
+<form id="taskForm" method="post" action="/task/edit/{{ task.id }}">
+
+  {{ govukInput({
+    id: "title",
+    name: "title",
+    label: { text: "Title" },
+    value: task.title
+  }) }}
+
+  {{ govukTextarea({
+    id: "description",
+    name: "description",
+    label: { text: "Description" },
+    value: task.description
+  }) }}
+
+  {{ govukSelect({
+    id: "status",
+    name: "status",
+    label: { text: "Status" },
+    items: [
+      { value: "CREATED", text: "Created", selected: task.status == "CREATED" },
+      { value: "IN_PROGRESS", text: "In Progress", selected: task.status == "IN_PROGRESS" },
+      { value: "CANCELLED", text: "Cancelled", selected: task.status == "CANCELLED" },
+      { value: "COMPLETED", text: "Completed", selected: task.status == "COMPLETED" }
+    ]
+  }) }}
+
+  {{ govukInput({
+    id: "dueDateTime",
+    name: "dueDateTime",
+    label: { text: "Due Date & Time" },
+    type: "datetime-local",
+    value: task.dueDateTime | replace("Z", "")
+  }) }}
+
+  <button class="govuk-button" type="submit">Save changes</button>
+
+</form>
+
+<script>
+  document.getElementById("taskForm").addEventListener("submit", function (e) {
+    const title = document.getElementById("title").value.trim();
+    const description = document.getElementById("description").value.trim();
+    const dueDateTime = document.getElementById("dueDateTime").value;
+
+    let errors = [];
+
+    if (!title) errors.push("Enter a title");
+    if (!dueDateTime) errors.push("Enter a due date and time");
+
+    if (dueDateTime) {
+      const selected = new Date(dueDateTime);
+      const now = new Date();
+
+      if (selected <= now) {
+        errors.push("Due date and time must be in the future");
+      }
+    }
+
+    if (errors.length > 0) {
+      e.preventDefault();
+      alert(errors.join("\n"));
+    }
+  });
+</script>
+
+<a href="/" class="govuk-link">Back to task list</a>
+
+{% endblock %}

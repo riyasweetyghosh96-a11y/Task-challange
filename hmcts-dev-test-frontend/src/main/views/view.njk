@@ -1,0 +1,46 @@
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+
+{% extends "template.njk" %}
+
+{% block content %}
+
+{{ govukSummaryList({
+  rows: [
+    {
+      key: {
+        text: "Title"
+      },
+      value: {
+        text: task.title
+      }
+    },
+    {
+      key: {
+        text: "Description"
+      },
+      value: {
+        text: task.description
+      }
+    },
+    {
+      key: {
+        text: "Due date time"
+      },
+      value: {
+        text: task.dueDateTime | replace("Z", "")
+      }
+    },
+    {
+      key: {
+        text: "Status"
+      },
+      value: {
+        text: task.status
+      }
+    }
+  ]
+}) }}
+
+<a href="/" class="govuk-link">Back to task list</a>
+
+{% endblock %}

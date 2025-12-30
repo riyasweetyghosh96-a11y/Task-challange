@@ -1,0 +1,121 @@
+{% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/tabs/macro.njk" import govukTabs %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+{% from "govuk/components/select/macro.njk" import govukSelect %}
+
+{% extends "template.njk" %}
+
+{% block content %}
+
+{% set taskListHtml %}
+<h2 class="govuk-heading-l">Task list</h2>
+  {% if tasks.length %}
+    {% set rows = [] %}
+
+    {% for task in tasks %}
+      {% set rows = rows.concat([
+        [
+          { html: '<a href="/task/view/' + task.id + '" class="govuk-link">' + task.title + '</a>' },
+          { text: task.status },
+          { html: '<a href="/task/edit/' + task.id + '" class="govuk-link">Edit</a>
+            | <a href="/delete-task/' + task.id + '" class="govuk-link">Delete</a>' }
+        ]
+      ]) %}
+    {% endfor %}
+
+    {{ govukTable({
+      head: [
+        {
+          text: "Title"
+        },
+        {
+          text: "Status"
+        },
+        { text: "Actions" }
+      ],
+      rows: rows
+    }) 
+    }}
+  {% else %}
+    <p>No tasks available.</p>
+  {% endif %}
+{% endset -%}
+  
+{% set taskCreateHtml %}
+<h2 class="govuk-heading-l">Task create</h2>
+
+  <form id="taskForm" method="post" action="/task/create">
+
+  {{ govukInput({
+    id: "title",
+    name: "title",
+    label: { text: "Title" }
+  }) }}
+
+  {{ govukTextarea({
+    id: "description",
+    name: "description",
+    label: { text: "Description" }
+  }) }}
+
+  {{ govukInput({
+    id: "dueDateTime",
+    name: "dueDateTime",
+    label: { text: "Due Date & Time" },
+    type: "datetime-local"
+  }) }}
+
+  <button class="govuk-button" type="submit">Create task</button>
+
+</form>
+
+<script>
+  document.getElementById("taskForm").addEventListener("submit", function (e) {
+    const title = document.getElementById("title").value.trim();
+    const description = document.getElementById("description").value.trim();
+    const dueDateTime = document.getElementById("dueDateTime").value;
+
+    let errors = [];
+
+    if (!title) errors.push("Enter a title");
+    if (!dueDateTime) errors.push("Enter a due date and time");
+
+    if (dueDateTime) {
+      const selected = new Date(dueDateTime);
+      const now = new Date();
+
+      if (selected <= now) {
+        errors.push("Due date and time must be in the future");
+      }
+    }
+
+    if (errors.length > 0) {
+      e.preventDefault();
+      alert(errors.join("\n"));
+    }
+  });
+</script>
+
+{% endset -%}
+
+{{ govukTabs({
+  items: [
+    {
+      label: "Task list",
+      id: "task-list",
+      panel: {
+        html: taskListHtml
+      }
+    },
+    {
+      label: "Task create",
+      id: "task-create",
+      panel: {
+        html: taskCreateHtml
+      }
+    }
+  ]
+}) }}
+
+{% endblock %}
