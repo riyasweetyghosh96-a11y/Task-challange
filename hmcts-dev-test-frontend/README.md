@@ -6,6 +6,8 @@ as creative as you want.
 To begin with, you should be able to run this by running:
 1) `yarn install`
 2) `yarn webpack`
-3) `yarn start:dev` or navigate to package.json and run the script manually
+3) `yarn start:dev`
+4) `Go to browser - http://localhost:3100`
+5) `If task-api backend is running then u would get 2 tabs - Task list and Create task`
 
-You can change the structure however you like! 
+
